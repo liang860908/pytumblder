@@ -107,7 +107,7 @@ def browse(args):
     global STAT_photos
     global STAT_new_photos
 
-    for i in range(args.startpage, args.pagelimit + 1):
+    for i in range(args.startpage, args.startpage + args.pagelimit):
         res = pagework(args, str(i))
         if res == 1:
             break
