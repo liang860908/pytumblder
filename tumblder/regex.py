@@ -12,4 +12,6 @@ PHOTOSET = rec('(http[s]?://[^ ]*/photoset_iframe/[^ ]*/false)', re.I)
 STATICPHOTO = rec('[^ ]*static.tumblr.com[^ ]*', re.I)
 SIZEDPHOTO = rec('.*/(.*_)([0-9]+)\.(' + _PICTYPES + ')', re.I)
 
+VIDEO = rec(r'\\x22(http[s]?://[^ ]*.tumblr.com/video_file/([^ ]*))\\x22 type=\\x22video/([^ ]*)\\x22', re.I)
+
 FILENAME = rec('http[s]?://.*/(.*\..*)')

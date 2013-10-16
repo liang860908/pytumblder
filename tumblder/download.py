@@ -14,18 +14,31 @@ STAT_photos = 0
 STAT_new_photos = 0
 
 def store(subdir, url):
-    filename = tumblder.regex.FILENAME.match(url).group(1)
-    msgurl = ' (' + url + ')'
-    filepath = subdir + '/' + filename
-
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
+    filename = ''
+    filepath = ''
+    turl = ''
+
+    isaphoto = True if type(url) == str else False
+
+    if isaphoto:
+        filename = tumblder.regex.FILENAME.match(url).group(1)
+        turl = url
+    else:
+        filename = url['name']
+        turl = url['url']
+
+    msgurl = ' (' + turl + ')'
+    filepath = subdir + '/' + filename
+
     fileexists = os.path.exists(filepath)
 
-    if tumblder.regex.STATICPHOTO.match(url) and fileexists:
-        print('static photo: ' + filename + msgurl)
-        return 2
+    if isaphoto:
+        if tumblder.regex.STATICPHOTO.match(turl) and fileexists:
+            print('static photo: ' + filename + msgurl)
+            return 2
     if fileexists:
         print('already downloaded: ' + filename + msgurl)
         return 1
@@ -33,8 +46,8 @@ def store(subdir, url):
     datas = None
     while True:
         try:
-            datas = session.get(url).content
             print('downloading: ' + filename + msgurl)
+            datas = session.get(turl).content
             break
         except requests.exceptions.ConnectionError:
             print('Sleeping for 10 seconds...')
@@ -68,7 +81,7 @@ def purge_smallsizes(photos):
 
     return photos
 
-def medias(content, smallsizes):
+def pictures(content, smallsizes):
     photos = tumblder.regex.PHOTO.findall(content)
     plentyphotos = tumblder.regex.PHOTOSET.findall(content)
 
@@ -82,13 +95,20 @@ def medias(content, smallsizes):
 
     return photos
 
+def videos(content):
+    vids = tumblder.regex.VIDEO.findall(content)
+    dvids = {}
+    for vid in vids:
+        dvids[vid[0]] = {'url':vid[0], 'name':vid[1].replace('/', '_') + '.' + vid[2]}
+    return dvids
+
 def pagework(args, page):
     global STAT_photos
     global STAT_new_photos
     url = args.blog + '/page/' + page
     content = session.get(url)
     print('page ' + page)
-    photos = medias(content.text, args.smallsizes)
+    photos = pictures(content.text, args.smallsizes)
     for photo in photos:
         res = store(args.dldir, photo)
         if res == 2:
@@ -102,6 +122,9 @@ def pagework(args, page):
             STAT_photos += 1
         if args.open:
             os.system(args.openin + ' ' + photo)
+    vids = videos(content.text)
+    for key, val in vids.items():
+        res = store(args.dldir, val)
 
 def browse(args):
     global STAT_photos
