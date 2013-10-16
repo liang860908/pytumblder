@@ -104,13 +104,6 @@ def pagework(args, page):
             os.system(args.openin + ' ' + photo)
 
 def browse(args):
-    """
-    Start point.
-
-    1. Blog text content is retreived and parsed.
-    2. Pictures are retreived and stored.
-    3. TODO: navigate through pages and go to 1.
-    """
     global STAT_photos
     global STAT_new_photos
 
