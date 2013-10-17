@@ -12,7 +12,7 @@ PHOTO = rec('(http[s]?://[a-z0-9\.]*(?:media|static)' + TUMBLR + '/(?!avatar|pre
 PHOTOSET = rec('(http[s]?://[^ ]*/photoset_iframe/[^ ]*/false)', re.I)
 SIZEDPHOTO = rec('.*/(.*_)([0-9]+)\.(' + _PICTYPES + ')', re.I)
 
-VIDEO = rec(r'\\x22(http[s]?://[^ ]*' + TUMBLR + '/video_file/([^ ]*))\\x22 type=\\x22video/([^ ]*)\\x22', re.I)
+VIDEO = rec(r'\\x22(http[s]?://[^ ]*' + TUMBLR + r'/video_file/([^ ]*))\\x22 type=\\x22video/([^ ]*)\\x22', re.I)
 
 FILENAME = rec('http[s]?://.*/(.*\..*)')
 STATICRES = rec('[^ ]*static' + TUMBLR + '[^ ]*', re.I)
