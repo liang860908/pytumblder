@@ -18,9 +18,3 @@ class UpdateStopped(Exception):
         self.value = value
     def __str__(self):
         return 'update stopped: ' + repr(self.value)
-
-class DownloadPaused(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return 'download paused: ' + repr(self.value)

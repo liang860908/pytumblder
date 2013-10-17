@@ -81,10 +81,6 @@ def pagework(args, page):
             sys.stderr.write(str(err) + '\n')
         except tumblder.exceptions.StaticFileExists as err:
             pass
-        except tumblder.exceptions.DownloadPaused as err:
-            sys.stderr.write(str(err) + '\n')
-            time.sleep(10)
-            res = tumblder.write.media(args.dldir, media, session)
         else:
             STAT_new_medias += 1
         finally:
