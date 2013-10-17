@@ -4,6 +4,9 @@
 from tumblder import session
 import tumblder.regex as regex
 
+def content(blog, page):
+    return session.get(blog + '/page/' + str(page))
+
 def purge_smallsizes(photos):
     dphotos = {}
     for photo in photos:

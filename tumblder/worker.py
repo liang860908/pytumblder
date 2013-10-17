@@ -23,8 +23,7 @@ def pagework(args, page, getter):
 
     medias = []
 
-    url = args.blog + '/page/' + page
-    content = session.get(url)
+    content = getter.content(args.blog, page)
     photos = getter.pictures(content.text, args.smallsizes)
     medias.extend(photos)
     if args.videos:
@@ -61,7 +60,7 @@ def browse(args):
     try:
         for i in range(args.startpage, args.startpage + args.pagelimit):
             print('=== page ' + str(i))
-            res = pagework(args, str(i), getter)
+            res = pagework(args, i, getter)
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
     sys.stderr.flush()
