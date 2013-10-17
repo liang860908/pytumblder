@@ -15,6 +15,7 @@ def main():
     parser.add_argument('-s', '--smallsizes', action='store_true')
     parser.add_argument('-u', '--forceupdate', action='store_true')
     parser.add_argument('-S', '--startpage', default=1, type=int)
+    parser.add_argument('-V', '--videos', action='store_true')
     args = parser.parse_args()
 
     if args.recursive:

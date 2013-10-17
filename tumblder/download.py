@@ -68,10 +68,14 @@ def pagework(args, page):
     url = args.blog + '/page/' + page
     content = session.get(url)
     tumblder.write.prepare(args.dldir)
+
+    medias = []
     photos = pictures(content.text, args.smallsizes)
-    vids = videos(content.text)
-    photos.extend(vids)
-    medias = photos
+    medias.extend(photos)
+    if args.videos:
+        vids = videos(content.text)
+        medias.extend(vids)
+
     for media in medias:
         try:
             res = tumblder.write.media(args.dldir, media, session)
