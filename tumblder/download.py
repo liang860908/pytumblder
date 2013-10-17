@@ -74,17 +74,17 @@ def pagework(args, page):
     medias = photos
     for media in medias:
         try:
-            res = tumblder.write.media(args.dldir, media)
+            res = tumblder.write.media(args.dldir, media, session)
         except tumblder.exceptions.FileExists as err:
             if not args.forceupdate:
                 raise tumblder.exceptions.UpdateStopped(err.value)
             sys.stderr.write(str(err) + '\n')
         except tumblder.exceptions.StaticFileExists as err:
             pass
-        except tumblder.exceptins.DownloadPaused as err:
+        except tumblder.exceptions.DownloadPaused as err:
             sys.stderr.write(str(err) + '\n')
             time.sleep(10)
-            res = tumblder.write.media(args.dldir, media)
+            res = tumblder.write.media(args.dldir, media, session)
         else:
             STAT_new_medias += 1
         finally:
