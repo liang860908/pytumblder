@@ -20,7 +20,9 @@ def main():
     if args.recursive:
         print('/!\\ recursive download (take reblogs) not implemented /!\\')
 
-    tumblder.download.browse(args)
+    res = tumblder.download.browse(args)
+    if res == 1:
+        print('Bad blog url. Example: http://blog.tumblr.com')
 
 if __name__ == '__main__':
     main()
