@@ -54,7 +54,6 @@ def purge_smallsizes(photos):
         if m:
             name = m.group(1)
             size = int(m.group(2))
-            ext = m.group(3)
             if name in dphotos.keys():
                 if dphotos[name]['size'] < size:
                     dphotos[name]['size'] = size
