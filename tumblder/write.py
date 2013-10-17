@@ -52,7 +52,7 @@ def media(subdir, media, session):
         length -= to_read_sub
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
-        print_log('downloading: ', '{0}% {1} ({2})'.format(dl, filename, url), True)
+        print_log('downloading: ', '{0}% {1}'.format(dl, url), True)
         f.write(data)
         f.flush()
     f.close()
