@@ -4,7 +4,6 @@
 import re
 from re import compile as rec
 
-
 _PICTYPES = '|'.join(['png', 'jpg', 'jpeg', 'gif'])
 TUMBLR = '.tumblr.com'
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
 # vim: expandtab tabstop=4 shiftwidth=4
 
-__all__ = ['download', 'regex']
+import requests
+
+session = requests.Session()
+__all__ = ['download', 'regex', 'html', 'api', 'worker']

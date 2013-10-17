@@ -8,8 +8,10 @@ import time
 import requests
 
 import tumblder.exceptions
-import tumblder.regex as regex
+import tumblder.download as download
+
 from tumblder.common.logging import print_log
+from tumblder import regex
 
 def prepare(subdir):
     if not os.path.exists(subdir):
@@ -27,33 +29,28 @@ def media(subdir, media, session):
     elif fileexists:
         raise tumblder.exceptions.FileExists(filepath)
 
-    length = 100
-    length_orig = length + 1
+    length_orig = length = 100
     to_read_sub = 8192 * 16
 
-    datas = session.get(url, stream=True).raw
-    try:
-        length = int(datas.getheader('content-length'))
-        length_orig = length
-    except TypeError:
-        pass
+    stream, length = download.stream(url)
+    length_orig = length
 
     f = open(filepath, 'wb')
     while length > 0:
         while True:
             try:
-                data = datas.read(to_read_sub, True)
+                datas, size = download.chunk(stream, to_read_sub)
                 break
             except requests.exceptions.ConnectionError:
                 print('download paused')
                 time.sleep(2)
-        if data is b'':
+        if not size:
             break
-        length -= to_read_sub
+        length -= size
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
         print_log('downloading: ', '{0}% {1}'.format(dl, url), True)
-        f.write(data)
+        f.write(datas)
         f.flush()
     f.close()
     print()
