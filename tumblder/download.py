@@ -3,49 +3,17 @@
 
 import os
 import time
+import sys
 
 import requests
 
+import tumblder.write
+import tumblder.exceptions
 from tumblder import regex
 
 session = requests.Session()
 
-STAT_photos = 0
-STAT_new_photos = 0
-
-def store(subdir, media):
-    if not os.path.exists(subdir):
-        os.makedirs(subdir)
-
-    filename = media['name']
-    filepath = subdir + '/' + filename
-    turl = media['url']
-    msgurl = ' (' + turl + ')'
-
-    fileexists = os.path.exists(filepath)
-
-    if regex.STATICRES.match(turl) and fileexists:
-        print('static ressource: ' + filename + msgurl)
-        return 2
-    elif fileexists:
-        print('already downloaded: ' + filename + msgurl)
-        return 1
-
-    datas = None
-    while True:
-        try:
-            print('downloading: ' + filename + msgurl)
-            datas = session.get(turl).content
-            break
-        except requests.exceptions.ConnectionError:
-            print('Sleeping for 10 seconds...')
-            time.sleep(10)
-
-    f = open(filepath, 'wb')
-    f.write(datas)
-    f.close()
-
-    return 0
+STAT_new_medias = 0
 
 def purge_smallsizes(photos):
     dphotos = {}
@@ -90,49 +58,56 @@ def pictures(content, smallsizes):
 
 def videos(content):
     vids = regex.VIDEO.findall(content)
-    ldvids = {}
+    ldvids = []
     for vid in vids:
         ldvids.append({'url':vid[0], 'name':vid[1].replace('/', '_') + '.' + vid[2]})
     return ldvids
 
 def pagework(args, page):
-    global STAT_photos
-    global STAT_new_photos
+    global STAT_new_medias
     url = args.blog + '/page/' + page
     content = session.get(url)
-    print('page ' + page)
+    tumblder.write.prepare(args.dldir)
     photos = pictures(content.text, args.smallsizes)
-    for photo in photos:
-        res = store(args.dldir, photo)
-        if res == 2:
-            pass
-        elif res == 0:
-            STAT_photos += 1
-            STAT_new_photos += 1
-        elif res == 1 and not args.forceupdate:
-            return 1
-        elif res == 1:
-            STAT_photos += 1
-        if args.open:
-            os.system(args.openin + ' ' + photo)
     vids = videos(content.text)
-    for vid in vids:
-        res = store(args.dldir, val)
+    photos.extend(vids)
+    medias = photos
+    for media in medias:
+        try:
+            res = tumblder.write.media(args.dldir, media)
+        except tumblder.exceptions.FileExists as err:
+            if not args.forceupdate:
+                raise tumblder.exceptions.UpdateStopped(err.value)
+            sys.stderr.write(str(err) + '\n')
+        except tumblder.exceptions.StaticFileExists as err:
+            pass
+        except tumblder.exceptins.DownloadPaused as err:
+            sys.stderr.write(str(err) + '\n')
+            time.sleep(10)
+            res = tumblder.write.media(args.dldir, media)
+        else:
+            STAT_new_medias += 1
+        finally:
+            sys.stderr.flush()
+
+        if args.open:
+            os.system(args.openin + ' ' + media)
 
 def browse(args):
-    global STAT_photos
-    global STAT_new_photos
+    global STAT_new_medias
 
     blogname = regex.BLOGNAME.match(args.blog)
     if not blogname:
         return 1
     args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
 
-    for i in range(args.startpage, args.startpage + args.pagelimit):
-        res = pagework(args, str(i))
-        if res == 1:
-            break
-    print('Resume:')
-    print('Pages: {0}/{1}'.format(i, args.pagelimit))
-    print('Photos: {0}'.format(STAT_photos))
-    print('New photos: {0}'.format(STAT_new_photos))
+    print(args.blog + ' ' + '=' * (40 - len(args.blog)))
+    try:
+        for i in range(args.startpage, args.startpage + args.pagelimit):
+            print('=== page ' + str(i))
+            res = pagework(args, str(i))
+    except tumblder.exceptions.UpdateStopped as err:
+        sys.stderr.write(str(err) + '\n')
+    sys.stderr.flush()
+    print('\nPages: {0}/{1}'.format(i, args.startpage + args.pagelimit - 1))
+    print('New medias: {0}'.format(STAT_new_medias))
