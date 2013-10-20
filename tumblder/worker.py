@@ -38,9 +38,9 @@ def getmedias(args, medias):
         retry_dl = True
         while retry_dl:
             try:
-                res = tumblder.write.media(args.dldir, media, session)
+                tumblder.write.media(args.dldir, media, session)
             except requests.exceptions.ConnectionError:
-                sys.stderr.write('downloads stalled')
+                sys.stderr.write('download stalled: ' + media)
                 time.sleep(10)
             except tumblder.exceptions.FileExists as err:
                 if not args.forceupdate:
