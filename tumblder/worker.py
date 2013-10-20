@@ -35,18 +35,24 @@ def getmedias(args, medias):
     global STAT_new_medias
 
     for media in medias:
-        try:
-            res = tumblder.write.media(args.dldir, media, session)
-        except tumblder.exceptions.FileExists as err:
-            if not args.forceupdate:
-                raise tumblder.exceptions.UpdateStopped(err.value)
-            sys.stderr.write(str(err) + '\n')
-        except tumblder.exceptions.StaticFileExists as err:
-            pass
-        else:
-            STAT_new_medias += 1
-        finally:
-            sys.stderr.flush()
+        retry_dl = True
+        while retry_dl:
+            try:
+                res = tumblder.write.media(args.dldir, media, session)
+            except requests.exceptions.ConnectionError:
+                sys.stderr.write('downloads stalled')
+                time.sleep(10)
+            except tumblder.exceptions.FileExists as err:
+                if not args.forceupdate:
+                    raise tumblder.exceptions.UpdateStopped(err.value)
+                sys.stderr.write(str(err) + '\n')
+            except tumblder.exceptions.StaticFileExists as err:
+                pass
+            else:
+                STAT_new_medias += 1
+            finally:
+                sys.stderr.flush()
+                retry_dl = False
 
         if args.open:
             os.system(args.openin + ' ' + media)
@@ -67,13 +73,7 @@ def browse(args):
             print('=== page ' + str(i))
             medias = pagemedias(args, i, getter)
             retry_dl = True
-            while retry_dl:
-                try:
-                    res = getmedias(args, medias)
-                except requests.exceptions.ConnectionError:
-                    time.sleep(10)
-                else:
-                    retry_dl = False
+            getmedias(args, medias)
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
     sys.stderr.flush()
