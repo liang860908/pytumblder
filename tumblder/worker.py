@@ -43,7 +43,7 @@ def getmedia(dldir, media):
         except requests.exceptions.ConnectionError:
             retry_try += 1
             print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media, True)
-            time.sleep(10 * (retry_try + 1))
+            time.sleep(10 * retry_try)
     if not retry_try < retry_max:
         print_log('download failed: ', media, True)
 
