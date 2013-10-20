@@ -41,9 +41,9 @@ def getmedia(dldir, media):
             tumblder.write.media(dldir, media, session)
             retry_dl = False
         except requests.exceptions.ConnectionError:
-            retry_try += 1
             print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media['url'], True)
             time.sleep(10 * retry_try)
+            retry_try += 1
     if retry_try > retry_max:
         print_log('download failed: ', media['url'], True)
     print('')
