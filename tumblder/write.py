@@ -4,6 +4,8 @@
 import os
 import sys
 import time
+import shutil
+import tempfile
 
 import requests
 
@@ -35,7 +37,7 @@ def media(subdir, media, session):
     stream, length = download.stream(url)
     length_orig = length
 
-    f = open(filepath, 'wb')
+    tmpfile = tempfile.NamedTemporaryFile(prefix='pytumblder_', delete=False)
     while length > 0:
         while True:
             try:
@@ -50,8 +52,9 @@ def media(subdir, media, session):
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
         print_log('downloading: ', '{0}% {1}'.format(dl, url), True)
-        f.write(datas)
-        f.flush()
-    f.close()
+        tmpfile.write(datas)
+        tmpfile.flush()
+    tmpfile.close()
+    shutil.move(tmpfile.name, filepath)
     print()
 

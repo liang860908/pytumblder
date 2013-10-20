@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--blog', required=True,
             help='full url to tumblr blog. http://blog.tumblr.com')
-    parser.add_argument('-f', '--dldir', default='./',
+    parser.add_argument('-f', '--dldir', default='.',
             help='download directory')
     parser.add_argument('-l', '--pagelimit', default=1, type=int,
             help='number of pages to watch')
