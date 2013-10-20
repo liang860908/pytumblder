@@ -12,10 +12,6 @@ def main():
             help='download directory')
     parser.add_argument('-l', '--pagelimit', default=1, type=int,
             help='number of pages to watch')
-    parser.add_argument('-o', '--open', action='store_true',
-            help='open in a program. change with --openin')
-    parser.add_argument('-p', '--openin', default='firefox ',
-            help='open in this program')
     parser.add_argument('-s', '--smallsizes', action='store_true',
             help='take small and full size photos')
     parser.add_argument('-u', '--forceupdate', action='store_true',

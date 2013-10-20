@@ -13,6 +13,8 @@ import tumblder.write
 import tumblder.exceptions
 import tumblder.regex as regex
 
+from tumblder.common.logging import print_log
+
 session = requests.Session()
 
 STAT_new_medias = 0
@@ -30,32 +32,32 @@ def pagemedias(args, page, getter):
 
     return medias
 
+def getmedia(dldir, media):
+    retry_dl = True
+    while retry_dl:
+        try:
+            tumblder.write.media(dldir, media, session)
+            retry_dl = False
+        except requests.exceptions.ConnectionError:
+            print_log('download stalled: ', media, True)
+            time.sleep(10)
 
 def getmedias(args, medias):
     global STAT_new_medias
 
     for media in medias:
-        retry_dl = True
-        while retry_dl:
-            try:
-                tumblder.write.media(args.dldir, media, session)
-            except requests.exceptions.ConnectionError:
-                sys.stderr.write('download stalled: ' + media)
-                time.sleep(10)
-            except tumblder.exceptions.FileExists as err:
-                if not args.forceupdate:
-                    raise tumblder.exceptions.UpdateStopped(err.value)
-                sys.stderr.write(str(err) + '\n')
-            except tumblder.exceptions.StaticFileExists as err:
-                pass
-            else:
-                STAT_new_medias += 1
-            finally:
-                sys.stderr.flush()
-                retry_dl = False
-
-        if args.open:
-            os.system(args.openin + ' ' + media)
+        try:
+            getmedia(args.dldir, media)
+        except tumblder.exceptions.FileExists as err:
+            if not args.forceupdate:
+                raise tumblder.exceptions.UpdateStopped(err.value)
+            sys.stderr.write(str(err) + '\n')
+        except tumblder.exceptions.StaticFileExists as err:
+            pass
+        else:
+            STAT_new_medias += 1
+        finally:
+            sys.stderr.flush()
 
 def browse(args):
     global STAT_new_medias
