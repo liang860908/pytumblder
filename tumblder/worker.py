@@ -46,6 +46,7 @@ def getmedia(dldir, media):
             time.sleep(10 * retry_try)
     if not retry_try < retry_max:
         print_log('download failed: ', media, True)
+    print('')
 
 def getmedias(args, medias):
     global STAT_new_medias
