@@ -33,14 +33,19 @@ def pagemedias(args, page, getter):
     return medias
 
 def getmedia(dldir, media):
+    retry_max = 3
     retry_dl = True
-    while retry_dl:
+    retry_try = 0
+    while retry_dl and retry_try < retry_max:
         try:
             tumblder.write.media(dldir, media, session)
             retry_dl = False
         except requests.exceptions.ConnectionError:
-            print_log('download stalled: ', media, True)
+            retry_try += 1
+            print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media, True)
             time.sleep(10)
+    if not retry_try < retry_max:
+        print_log('download failed: ', media, True)
 
 def getmedias(args, medias):
     global STAT_new_medias
