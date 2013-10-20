@@ -45,7 +45,7 @@ def getmedia(dldir, media):
             print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media, True)
             time.sleep(10 * retry_try)
     if not retry_try < retry_max:
-        print_log('download failed: ', media, True)
+        print_log('download failed: ', media['url'], True)
     print('')
 
 def getmedias(args, medias):
