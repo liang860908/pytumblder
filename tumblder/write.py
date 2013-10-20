@@ -39,13 +39,7 @@ def media(subdir, media, session):
 
     tmpfile = tempfile.NamedTemporaryFile(prefix='pytumblder_', delete=False)
     while length > 0:
-        while True:
-            try:
-                datas, size = download.chunk(stream, to_read_sub)
-                break
-            except requests.exceptions.ConnectionError:
-                print('download paused')
-                time.sleep(2)
+        datas, size = download.chunk(stream, to_read_sub)
         if not size:
             break
         length -= size

@@ -17,18 +17,22 @@ session = requests.Session()
 
 STAT_new_medias = 0
 
-def pagework(args, page, getter):
-    global STAT_new_medias
-    tumblder.write.prepare(args.dldir)
-
+def pagemedias(args, page, getter):
     medias = []
 
     content = getter.content(args.blog, page)
     photos = getter.pictures(content.text, args.smallsizes)
     medias.extend(photos)
+
     if args.videos:
         vids = getter.videos(content.text)
         medias.extend(vids)
+
+    return medias
+
+
+def getmedias(args, medias):
+    global STAT_new_medias
 
     for media in medias:
         try:
@@ -57,10 +61,19 @@ def browse(args):
     getter = import_module('tumblder.html') if args.html else import_module('tumblder.api')
 
     print(args.blog + ' ' + '=' * (40 - len(args.blog)))
+    tumblder.write.prepare(args.dldir)
     try:
         for i in range(args.startpage, args.startpage + args.pagelimit):
             print('=== page ' + str(i))
-            res = pagework(args, i, getter)
+            medias = pagemedias(args, i, getter)
+            retry_dl = True
+            while retry_dl:
+                try:
+                    res = getmedias(args, medias)
+                except requests.exceptions.ConnectionError:
+                    time.sleep(10)
+                else:
+                    retry_dl = False
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
     sys.stderr.flush()
