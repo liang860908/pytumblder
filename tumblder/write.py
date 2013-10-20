@@ -50,5 +50,5 @@ def media(subdir, media, session):
         tmpfile.flush()
     tmpfile.close()
     shutil.move(tmpfile.name, filepath)
-    print()
+    print('')
 
