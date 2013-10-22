@@ -18,6 +18,7 @@ from tumblder.common.logging import print_log
 session = requests.Session()
 
 STAT_new_medias = 0
+STAT_page_medias = 0
 
 def pagemedias(args, page, getter):
     medias = []
@@ -30,7 +31,7 @@ def pagemedias(args, page, getter):
         vids = getter.videos(content.text)
         medias.extend(vids)
 
-    return medias
+    return medias, len(medias)
 
 def getmedia(dldir, media):
     retry_max = 3
@@ -66,6 +67,7 @@ def getmedias(args, medias):
 
 def browse(args):
     global STAT_new_medias
+    global STAT_page_medias
 
     blogname = regex.BLOGNAME.match(args.blog)
     if not blogname:
@@ -73,16 +75,15 @@ def browse(args):
     args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
     getter = import_module('tumblder.html') if args.html else import_module('tumblder.api')
 
-    print(args.blog + ' ' + '=' * (40 - len(args.blog)))
     tumblder.write.prepare(args.dldir)
     try:
         for i in range(args.startpage, args.startpage + args.pagelimit):
-            print('=== page ' + str(i))
-            medias = pagemedias(args, i, getter)
+            medias, lenmedias = pagemedias(args, i, getter)
+            print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
+                i, lenmedias, args.startpage + args.pagelimit - 1))
             retry_dl = True
             getmedias(args, medias)
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
     sys.stderr.flush()
-    print('\nPages: {0}/{1}'.format(i, args.startpage + args.pagelimit - 1))
-    print('New medias: {0}'.format(STAT_new_medias))
+    print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
