@@ -57,7 +57,6 @@ def getmedias(args, medias):
         except tumblder.exceptions.FileExists as err:
             if not args.forceupdate:
                 raise tumblder.exceptions.UpdateStopped(err.value)
-            sys.stderr.write(str(err) + '\n')
         except tumblder.exceptions.StaticFileExists as err:
             pass
         else:
