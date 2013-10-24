@@ -6,7 +6,7 @@ import tumblder.worker
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--blog', required=True,
+    parser.add_argument('-b', '--blog',
             help='full url to tumblr blog. http://blog.tumblr.com')
     parser.add_argument('-f', '--dldir', default='.',
             help='download directory')
@@ -30,9 +30,10 @@ def main():
             help='download videos too')
     args = parser.parse_args()
 
-    res = tumblder.worker.browse(args)
-    if res == 1:
-        print('Bad blog url. Example: http://blog.tumblr.com')
+    if not args.generate and not args.blog:
+        parser.error('--blog (-b) needed.')
+
+    tumblder.worker.browse(args)
 
 if __name__ == '__main__':
     main()
