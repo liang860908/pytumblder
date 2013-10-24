@@ -72,6 +72,7 @@ def browse(args):
     global STAT_page_medias
 
     if args.generate:
+        print('generating html page: ' + args.dldir)
         html = tumblder.gen.html.generate(args.dldir, root=args.root)
         tumblder.gen.write.write(args.dldir, html)
         return 0
