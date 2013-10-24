@@ -2,7 +2,10 @@
 # vim: expandtab tabstop=4 shiftwidth=4
 
 import argparse
+import sys
+
 import tumblder.worker
+import tumblder.exceptions
 
 def main():
     parser = argparse.ArgumentParser()
@@ -20,8 +23,8 @@ def main():
             help='fetch pages and medias')
     parser.add_argument('-G', '--generate', action='store_true',
             help='generate HTML index page')
-    parser.add_argument('-H', '--html', action='store_false',
-            help='dont use the api, parse HTML like a browser can do')
+#    parser.add_argument('-H', '--html', action='store_true',
+#            help='dont use the api, parse HTML like a browser can do')
     parser.add_argument('-R', '--root', type=str, default='',
             help='in generated html, take this as root')
     parser.add_argument('-S', '--startpage', default=1, type=int,
@@ -30,10 +33,14 @@ def main():
             help='download videos too')
     args = parser.parse_args()
 
-    if not args.generate and not args.blog:
+    if args.fetch and not args.blog:
         parser.error('--blog (-b) needed.')
 
-    tumblder.worker.browse(args)
+    try:
+        tumblder.worker.browse(args)
+    except tumblder.exceptions.InvalidBlogUrl as err:
+        sys.stderr.write('{0}\n'.format(err))
+        sys.stderr.flush()
 
 if __name__ == '__main__':
     main()

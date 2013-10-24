@@ -71,29 +71,30 @@ def browse(args):
     global STAT_new_medias
     global STAT_page_medias
 
+    if args.fetch:
+        blogname = regex.BLOGNAME.match(args.blog)
+        if not blogname:
+            raise tumblder.exceptions.InvalidBlogUrl()
+        args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
+        getter = import_module('tumblder.html')# if args.html else import_module('tumblder.api')
+
+        tumblder.write.prepare(args.dldir)
+
+        try:
+            for i in range(args.startpage, args.startpage + args.pagelimit):
+                medias, lenmedias = pagemedias(args, i, getter)
+                print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
+                    i, lenmedias, args.startpage + args.pagelimit - 1))
+                retry_dl = True
+                getmedias(args, medias)
+        except tumblder.exceptions.UpdateStopped as err:
+            sys.stderr.write('{0}\n'.format(err))
+            sys.stderr.flush()
+
+        print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
+
     if args.generate:
         print('generating html page: {0}'.format(args.dldir))
         html = tumblder.gen.html.generate(args.dldir, root=args.root)
         tumblder.gen.write.write(args.dldir, html)
-        return 0
 
-    try:
-        blogname = regex.BLOGNAME.match(args.blog)
-        if not blogname:
-            return 1
-        args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
-        getter = import_module('tumblder.html') if args.html else import_module('tumblder.api')
-
-        tumblder.write.prepare(args.dldir)
-
-        for i in range(args.startpage, args.startpage + args.pagelimit):
-            medias, lenmedias = pagemedias(args, i, getter)
-            print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
-                i, lenmedias, args.startpage + args.pagelimit - 1))
-            retry_dl = True
-            getmedias(args, medias)
-    except tumblder.exceptions.UpdateStopped as err:
-        sys.stderr.write('{0}\n'.format(err))
-    sys.stderr.flush()
-
-    print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
