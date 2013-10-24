@@ -12,7 +12,8 @@ def generate(directory, root=''):
     }
     </style>'''
     html = '<html><head>{0}</head><body>'.format(css)
-    photos = [x for x in sorted(os.listdir(directory)) if regex.ISPHOTO.match(x)]
+    files = reversed(sorted(os.listdir(directory)))
+    photos = [x for x in files if regex.ISPHOTO.match(x)]
     for photo in photos:
         src = os.path.join(root, photo)
         html += '<a href="{0}"><img src="{0}" /></a>\n'.format(src)
