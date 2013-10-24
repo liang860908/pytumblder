@@ -10,10 +10,10 @@ def content(blog, page):
 def purge_smallsizes(photos):
     dphotos = {}
     for photo in photos:
-        m = regex.SIZEDPHOTO.match(photo)
-        if m:
-            name = m.group(1)
-            size = int(m.group(2))
+        sizedphoto = regex.SIZEDPHOTO.match(photo)
+        if sizedphoto:
+            name = sizedphoto.group('name')
+            size = int(sizedphoto.group('size'))
             if name in dphotos.keys():
                 if dphotos[name]['size'] < size:
                     dphotos[name]['size'] = size
@@ -43,7 +43,7 @@ def pictures(content, smallsizes):
         photos = purge_smallsizes(photos)
 
     for photo in photos:
-        filename = regex.FILENAME.match(photo).group(1)
+        filename = regex.FILENAME.match(photo).group('name')
         ldphotos.append({'url':photo, 'name':filename})
 
     return ldphotos
@@ -52,5 +52,7 @@ def videos(content):
     vids = regex.VIDEO.findall(content)
     ldvids = []
     for vid in vids:
-        ldvids.append({'url':vid[0], 'name':vid[1].replace('/', '_') + '.' + vid[2]})
+        vidurl = vid[0]
+        vidname = vid[1].replace('/', '_') + '.' + vid[2]
+        ldvids.append({'url':vid[0], 'name':vidname})
     return ldvids
