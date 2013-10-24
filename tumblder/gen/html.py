@@ -6,6 +6,7 @@ def generate(directory, root=''):
     html = '<html><head></head><body>'
     files = os.listdir(directory)
     for tfile in files:
-        html += '<img src="{0}"/>\n'.format(os.path.join(root, tfile))
+        src = os.path.join(root, tfile)
+        html += '<a href="{1}"><img src="{0}"/></a>\n'.format(src, src)
     html += '</body></html>'
     return html
