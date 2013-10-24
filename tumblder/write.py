@@ -2,12 +2,8 @@
 # vim: expandtab tabstop=4 shiftwidth=4
 
 import os
-import sys
-import time
 import shutil
 import tempfile
-
-import requests
 
 import tumblder.exceptions
 import tumblder.download as download
@@ -19,7 +15,7 @@ def prepare(subdir):
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
-def media(subdir, media, session):
+def media(subdir, media):
     filename = media['name']
     filepath = subdir + '/' + filename
     url = media['url']
@@ -34,7 +30,7 @@ def media(subdir, media, session):
     length_orig = length = 100
     to_read_sub = 8192 * 16
 
-    stream, length = download.stream(url)
+    stream, length = download.streaming(url)
     length_orig = length
 
     tmpfile = tempfile.NamedTemporaryFile(prefix='pytumblder_', delete=False)

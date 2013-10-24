@@ -4,7 +4,7 @@
 from tumblder import session
 import tumblder.regex as regex
 
-def content(blog, page):
+def getcontent(blog, page):
     return session.get(blog + '/page/' + str(page))
 
 def purge_smallsizes(photos):
@@ -54,5 +54,5 @@ def videos(content):
     for vid in vids:
         vidurl = vid[0]
         vidname = vid[1].replace('/', '_') + '.' + vid[2]
-        ldvids.append({'url':vid[0], 'name':vidname})
+        ldvids.append({'url':vidurl, 'name':vidname})
     return ldvids

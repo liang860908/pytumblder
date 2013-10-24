@@ -25,7 +25,7 @@ STAT_page_medias = 0
 def pagemedias(args, page, getter):
     medias = []
 
-    content = getter.content(args.blog, page)
+    content = getter.getcontent(args.blog, page)
     photos = getter.pictures(content.text, args.smallsizes)
     medias.extend(photos)
 
@@ -41,7 +41,7 @@ def fetchmedia(dldir, media):
     retry_try = 1
     while retry_dl and retry_try <= retry_max:
         try:
-            tumblder.write.media(dldir, media, session)
+            tumblder.write.media(dldir, media)
             retry_dl = False
         except requests.exceptions.ConnectionError:
             print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media['url'], True)
