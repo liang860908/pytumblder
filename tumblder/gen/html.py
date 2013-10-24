@@ -2,10 +2,10 @@
 
 import os
 
-def generate(directory):
+def generate(directory, root=''):
     html = '<html><head></head><body>'
     files = os.listdir(directory)
     for tfile in files:
-        html += '<img src="{0}"/>\n'.format(tfile)
+        html += '<img src="{0}"/>\n'.format(os.path.join(root, tfile))
     html += '</body></html>'
     return html

@@ -22,6 +22,8 @@ def main():
             help='generate HTML index page')
     parser.add_argument('-H', '--html', action='store_false',
             help='dont use the api, parse HTML like a browser can do')
+    parser.add_argument('-R', '--root', type=str, default='',
+            help='in generated html, take this as root')
     parser.add_argument('-S', '--startpage', default=1, type=int,
             help='start browsing from this page number')
     parser.add_argument('-V', '--videos', action='store_true',

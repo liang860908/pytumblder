@@ -87,7 +87,8 @@ def browse(args):
                 retry_dl = True
                 getmedias(args, medias)
             elif args.generate:
-                html = tumblder.gen.html.generate(args.dldir)
+                print(blogname.group('blogname'))
+                html = tumblder.gen.html.generate(args.dldir, root=args.root)
                 tumblder.gen.write.write(args.dldir, html)
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
