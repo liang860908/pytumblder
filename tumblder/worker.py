@@ -72,12 +72,12 @@ def browse(args):
     global STAT_page_medias
 
     if args.fetch:
-        blogname = regex.BLOGNAME.match(args.blog)
+        blog = regex.BLOG.match(args.blog)
 
-        if not blogname:
+        if not blog:
             raise tumblder.exceptions.InvalidBlogUrl()
 
-        args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
+        args.blog = blog.group('protocol') + blog.group('name') + regex.TUMBLR
         getter = import_module('tumblder.html')# if args.html else import_module('tumblder.api')
 
         tumblder.write.prepare(args.dldir)
@@ -85,14 +85,14 @@ def browse(args):
         try:
             for i in range(args.startpage, args.startpage + args.pagelimit):
                 medias, lenmedias = pagemedias(args, i, getter)
-                print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
+                print('{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
                     i, lenmedias, args.startpage + args.pagelimit - 1))
                 fetchmedias(args, medias)
         except tumblder.exceptions.UpdateStopped as err:
             sys.stderr.write('{0}\n'.format(err))
             sys.stderr.flush()
 
-        print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
+        print('{0}, new medias: {1}'.format(blog.group('name'), STAT_new_medias))
 
     if args.generate:
         print('generating html page: {0}'.format(args.dldir))

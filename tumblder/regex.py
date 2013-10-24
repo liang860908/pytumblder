@@ -18,4 +18,4 @@ VIDEO = rec(r'\\x22(http[s]?://[^ ]*' + TUMBLR + r'/video_file/([^ ]*))\\x22 typ
 FILENAME = rec('http[s]?://.*/(?P<name>.*\..*)')
 STATICRES = rec('[^ ]*static' + TUMBLR + '[^ ]*', re.I)
 
-BLOGNAME = rec('(?P<protocol>http[s]?://)(?P<blogname>.*)' + TUMBLR + '[/]?', re.I)
+BLOG = rec('(?P<protocol>http[s]?://)(?P<name>.*)' + TUMBLR + '[/]?', re.I)
