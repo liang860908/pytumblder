@@ -7,6 +7,8 @@ from re import compile as rec
 _PICTYPES = '|'.join(['png', 'jpg', 'jpeg', 'gif'])
 TUMBLR = '.tumblr.com'
 
+ISPHOTO = rec('.*\.(' + _PICTYPES + ')')
+
 PHOTO = rec('(http[s]?://[a-z0-9\.]*(?:media|static)' + TUMBLR + '/(?!avatar|preview)[^ ]*\.(?:' + _PICTYPES + '))', re.I)
 PHOTOSET = rec('(http[s]?://[^ ]*/photoset_iframe/[^ ]*/false)', re.I)
 SIZEDPHOTO = rec('.*/(.*_)([0-9]+)\.(' + _PICTYPES + ')', re.I)
