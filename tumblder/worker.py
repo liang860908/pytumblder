@@ -35,7 +35,7 @@ def pagemedias(args, page, getter):
 
     return medias, len(medias)
 
-def getmedia(dldir, media):
+def fetchmedia(dldir, media):
     retry_max = 3
     retry_dl = True
     retry_try = 1
@@ -51,12 +51,12 @@ def getmedia(dldir, media):
         print_log('download failed: ', media['url'], True)
     print('')
 
-def getmedias(args, medias):
+def fetchmedias(args, medias):
     global STAT_new_medias
 
     for media in medias:
         try:
-            getmedia(args.dldir, media)
+            fetchmedia(args.dldir, media)
         except tumblder.exceptions.FileExists as err:
             if not args.forceupdate:
                 raise tumblder.exceptions.UpdateStopped(err.value)
@@ -73,8 +73,10 @@ def browse(args):
 
     if args.fetch:
         blogname = regex.BLOGNAME.match(args.blog)
+
         if not blogname:
             raise tumblder.exceptions.InvalidBlogUrl()
+
         args.blog = blogname.group('protocol') + blogname.group('blogname') + regex.TUMBLR
         getter = import_module('tumblder.html')# if args.html else import_module('tumblder.api')
 
@@ -85,8 +87,7 @@ def browse(args):
                 medias, lenmedias = pagemedias(args, i, getter)
                 print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
                     i, lenmedias, args.startpage + args.pagelimit - 1))
-                retry_dl = True
-                getmedias(args, medias)
+                fetchmedias(args, medias)
         except tumblder.exceptions.UpdateStopped as err:
             sys.stderr.write('{0}\n'.format(err))
             sys.stderr.flush()

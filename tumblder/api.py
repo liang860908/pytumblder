@@ -3,8 +3,8 @@
 
 from tumblder import session
 
-def content(blog, page):
-    return session.get(blog + '/api/read/?type=video&num=' + str(page * 20))
+def content(blog, page, mediatype):
+    return session.get('{0}/api/read/?type={1}&num={2}'.format(blog, mediatype, str(page * 20)))
 
 def videos(content):
-    xml = session.get('')
+    pass
