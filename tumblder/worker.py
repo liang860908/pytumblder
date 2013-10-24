@@ -12,6 +12,8 @@ import requests
 import tumblder.write
 import tumblder.exceptions
 import tumblder.regex as regex
+import tumblder.gen.html
+import tumblder.gen.write
 
 from tumblder.common.logging import print_log
 
@@ -78,12 +80,17 @@ def browse(args):
     tumblder.write.prepare(args.dldir)
     try:
         for i in range(args.startpage, args.startpage + args.pagelimit):
-            medias, lenmedias = pagemedias(args, i, getter)
-            print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
-                i, lenmedias, args.startpage + args.pagelimit - 1))
-            retry_dl = True
-            getmedias(args, medias)
+            if args.fetch:
+                medias, lenmedias = pagemedias(args, i, getter)
+                print('{0}, page {1}/{3}: {2} medias'.format(blogname.group('blogname'),
+                    i, lenmedias, args.startpage + args.pagelimit - 1))
+                retry_dl = True
+                getmedias(args, medias)
+            elif args.generate:
+                html = tumblder.gen.html.generate(args.dldir)
+                tumblder.gen.write.write(args.dldir, html)
     except tumblder.exceptions.UpdateStopped as err:
         sys.stderr.write(str(err) + '\n')
     sys.stderr.flush()
-    print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
+    if args.fetch:
+        print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))

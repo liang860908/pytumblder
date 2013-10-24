@@ -16,6 +16,10 @@ def main():
             help='take small and full size photos')
     parser.add_argument('-u', '--forceupdate', action='store_true',
             help='look each page for un update, instead of stopping on the first already-downloaded media')
+    parser.add_argument('-F', '--fetch', action='store_true',
+            help='fetch pages and medias')
+    parser.add_argument('-G', '--generate', action='store_true',
+            help='generate HTML index page')
     parser.add_argument('-H', '--html', action='store_false',
             help='dont use the api, parse HTML like a browser can do')
     parser.add_argument('-S', '--startpage', default=1, type=int,
