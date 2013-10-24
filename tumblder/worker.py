@@ -72,7 +72,7 @@ def browse(args):
     global STAT_page_medias
 
     if args.generate:
-        print('generating html page: ' + args.dldir)
+        print('generating html page: {0}'.format(args.dldir))
         html = tumblder.gen.html.generate(args.dldir, root=args.root)
         tumblder.gen.write.write(args.dldir, html)
         return 0
@@ -93,7 +93,7 @@ def browse(args):
             retry_dl = True
             getmedias(args, medias)
     except tumblder.exceptions.UpdateStopped as err:
-        sys.stderr.write(str(err) + '\n')
+        sys.stderr.write('{0}\n'.format(err))
     sys.stderr.flush()
 
     print('{0}, new medias: {1}'.format(blogname.group('blogname'), STAT_new_medias))
