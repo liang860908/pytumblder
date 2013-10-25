@@ -4,7 +4,6 @@
 import os
 import shutil
 import tempfile
-import signal
 
 import tumblder.exceptions
 import tumblder.download as download
@@ -46,7 +45,5 @@ def media(subdir, media):
         tmpfile.write(datas)
         tmpfile.flush()
     tmpfile.close()
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
     shutil.move(tmpfile.name, filepath)
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
