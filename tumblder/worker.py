@@ -41,7 +41,7 @@ def pagemedias(args, page, getter):
         medias.extend(vids)
 
     for media in medias:
-        mediaqueue.put(media)
+        mediaqueue.put([media, page])
 
     return len(medias)
 
@@ -57,11 +57,11 @@ def fetchmedia(args, media):
                 tumblder.write.media(args.dldir, media)
                 retry_dl = False
             except requests.exceptions.ConnectionError:
-                print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media['url'], True)
+                print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media[0]['url'], True)
                 time.sleep(10 * retry_try)
                 retry_try += 1
         if retry_try > retry_max:
-            print_log('download failed: ', media['url'], True)
+            print_log('download failed: ', media[0]['url'], True)
         print('')
     except tumblder.exceptions.FileExists as err:
         if not args.forceupdate:

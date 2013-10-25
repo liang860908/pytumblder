@@ -4,6 +4,7 @@
 import os
 import shutil
 import tempfile
+import signal
 
 import tumblder.exceptions
 import tumblder.download as download
@@ -16,9 +17,9 @@ def prepare(subdir):
         os.makedirs(subdir)
 
 def media(subdir, media):
-    filename = media['name']
+    filename = media[0]['name']
     filepath = subdir + '/' + filename
-    url = media['url']
+    url = media[0]['url']
 
     fileexists = os.path.exists(filepath)
 
@@ -41,9 +42,11 @@ def media(subdir, media):
         length -= size
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
-        print_log('downloading: ', '{0}% {1}'.format(dl, url), True)
+        print_log('downloading: ', 'page {2} {1} - {0}%'.format(dl, url, media[1]), True)
         tmpfile.write(datas)
         tmpfile.flush()
     tmpfile.close()
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     shutil.move(tmpfile.name, filepath)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
