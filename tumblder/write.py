@@ -8,7 +8,7 @@ import tempfile
 import tumblder.exceptions
 import tumblder.download as download
 
-from tumblder.common.logging import print_log
+from tumblder.pycommon.logging import print_log
 from tumblder import regex
 
 def prepare(subdir):

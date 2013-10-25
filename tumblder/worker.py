@@ -15,7 +15,7 @@ import tumblder.regex as regex
 import tumblder.gen.html
 import tumblder.gen.write
 
-from tumblder.common.logging import print_log
+from tumblder.pycommon.logging import print_log
 
 session = requests.Session()
 
