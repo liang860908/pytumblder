@@ -11,6 +11,8 @@ import tumblder.download as download
 from tumblder.pycommon.logging import print_log
 from tumblder import regex
 
+STOPWRITE = False
+
 def prepare(subdir):
     if not os.path.exists(subdir):
         os.makedirs(subdir)
@@ -34,7 +36,7 @@ def media(subdir, media):
     length_orig = length
 
     tmpfile = tempfile.NamedTemporaryFile(prefix='pytumblder_', delete=False)
-    while length > 0:
+    while length > 0 and not STOPWRITE:
         datas, size = download.chunk(stream, to_read_sub)
         if not size:
             break
@@ -45,5 +47,9 @@ def media(subdir, media):
         tmpfile.write(datas)
         tmpfile.flush()
     tmpfile.close()
-    shutil.move(tmpfile.name, filepath)
+
+    if STOPWRITE:
+        os.remove(tmpfile.name)
+    else:
+        shutil.move(tmpfile.name, filepath)
 

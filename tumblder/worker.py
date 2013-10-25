@@ -4,6 +4,7 @@
 import os
 import time
 import sys
+import signal
 
 from importlib import import_module
 from threading import Thread
@@ -79,6 +80,9 @@ def fetcher(args):
         fetchmedia(args, media)
         mediaqueue.task_done()
 
+def sig_stop_dl(signum, frame):
+    tumblder.write.STOPWRITE = True
+
 def browse(args):
     global STAT_new_medias
     global STAT_page_medias
@@ -98,8 +102,13 @@ def browse(args):
         mediathread.daemon = True
         mediathread.start()
 
+        signal.signal(signal.SIGINT, sig_stop_dl)
+
         try:
             for i in range(args.startpage, args.startpage + args.pagelimit):
+                print(tumblder.write.STOPWRITE)
+                if tumblder.write.STOPWRITE:
+                    return
                 lenmedias = pagemedias(args, i, getter)
                 print('{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
                     i, lenmedias, args.startpage + args.pagelimit - 1))
@@ -108,7 +117,10 @@ def browse(args):
             sys.stderr.write('{0}\n'.format(err))
             sys.stderr.flush()
 
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
         print('{0}, new medias: {1}'.format(blog.group('name'), STAT_new_medias))
+    
 
     if args.generate:
         print('generating html page: {0}'.format(args.dldir))
