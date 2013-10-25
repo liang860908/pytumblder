@@ -6,6 +6,7 @@ import time
 import sys
 
 from importlib import import_module
+from threading import Thread
 
 import requests
 
@@ -18,6 +19,12 @@ import tumblder.gen.write
 from tumblder.pycommon.logging import print_log
 
 session = requests.Session()
+
+try:
+    mediaqueue = Queue()
+except NameError:
+    import queue
+    mediaqueue = queue.Queue()
 
 STAT_new_medias = 0
 STAT_page_medias = 0
@@ -33,39 +40,44 @@ def pagemedias(args, page, getter):
         vids = getter.videos(content.text)
         medias.extend(vids)
 
-    return medias, len(medias)
+    for media in medias:
+        mediaqueue.put(media)
 
-def fetchmedia(dldir, media):
-    retry_max = 3
-    retry_dl = True
-    retry_try = 1
-    while retry_dl and retry_try <= retry_max:
-        try:
-            tumblder.write.media(dldir, media)
-            retry_dl = False
-        except requests.exceptions.ConnectionError:
-            print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media['url'], True)
-            time.sleep(10 * retry_try)
-            retry_try += 1
-    if retry_try > retry_max:
-        print_log('download failed: ', media['url'], True)
-    print('')
+    return len(medias)
 
-def fetchmedias(args, medias):
+def fetchmedia(args, media):
     global STAT_new_medias
 
-    for media in medias:
-        try:
-            fetchmedia(args.dldir, media)
-        except tumblder.exceptions.FileExists as err:
-            if not args.forceupdate:
-                raise tumblder.exceptions.UpdateStopped(err.value)
-        except tumblder.exceptions.StaticFileExists as err:
-            pass
-        else:
-            STAT_new_medias += 1
-        finally:
-            sys.stderr.flush()
+    try:
+        retry_max = 3
+        retry_dl = True
+        retry_try = 1
+        while retry_dl and retry_try <= retry_max:
+            try:
+                tumblder.write.media(args.dldir, media)
+                retry_dl = False
+            except requests.exceptions.ConnectionError:
+                print_log('download stalled {0}/{1}:'.format(retry_try, retry_max), media['url'], True)
+                time.sleep(10 * retry_try)
+                retry_try += 1
+        if retry_try > retry_max:
+            print_log('download failed: ', media['url'], True)
+        print('')
+    except tumblder.exceptions.FileExists as err:
+        if not args.forceupdate:
+            raise tumblder.exceptions.UpdateStopped(err.value)
+    except tumblder.exceptions.StaticFileExists as err:
+        pass
+    else:
+        STAT_new_medias += 1
+    finally:
+        sys.stderr.flush()
+
+def fetcher(args):
+    while True:
+        media = mediaqueue.get()
+        fetchmedia(args, media)
+        mediaqueue.task_done()
 
 def browse(args):
     global STAT_new_medias
@@ -82,12 +94,16 @@ def browse(args):
 
         tumblder.write.prepare(args.dldir)
 
+        mediathread = Thread(target=fetcher, args=[args])
+        mediathread.daemon = True
+        mediathread.start()
+
         try:
             for i in range(args.startpage, args.startpage + args.pagelimit):
-                medias, lenmedias = pagemedias(args, i, getter)
+                lenmedias = pagemedias(args, i, getter)
                 print('{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
                     i, lenmedias, args.startpage + args.pagelimit - 1))
-                fetchmedias(args, medias)
+            mediaqueue.join()
         except tumblder.exceptions.UpdateStopped as err:
             sys.stderr.write('{0}\n'.format(err))
             sys.stderr.flush()
