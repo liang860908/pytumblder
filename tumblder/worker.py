@@ -92,7 +92,7 @@ def browse(args):
             raise tumblder.exceptions.InvalidBlogUrl()
 
         args.blog = blog.group('protocol') + blog.group('name') + regex.TUMBLR
-        getter = import_module('tumblder.html')# if args.html else import_module('tumblder.api')
+        getter = import_module('tumblder.getter.html')# if args.html else import_module('tumblder.getter.api')
 
         tumblder.write.prepare(args.dldir)
 
