@@ -5,9 +5,9 @@ import os
 from tumblder import regex
 
 def write(directory, html, filename='index.html'):
-    f = open(os.path.join(directory, filename), 'w')
-    f.write(html)
-    f.close()
+    fhtml = open(os.path.join(directory, filename), 'w')
+    fhtml.write(html)
+    fhtml.close()
 
 def generate(directory, root=''):
     pages = []

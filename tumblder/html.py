@@ -23,7 +23,7 @@ def purge_smallsizes(photos):
         else:
             dphotos[photo] = {'url':photo, 'size':0}
     photos = []
-    for key, val in dphotos.items():
+    for val in dphotos.values():
         photos.append(val['url'])
 
     return photos

@@ -17,10 +17,10 @@ def prepare(subdir):
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
-def media(subdir, media):
-    filename = media[0]['name']
+def media(subdir, fmedia):
+    filename = fmedia[0]['name']
     filepath = subdir + '/' + filename
-    url = media[0]['url']
+    url = fmedia[0]['url']
 
     fileexists = os.path.exists(filepath)
 
@@ -43,7 +43,7 @@ def media(subdir, media):
         length -= size
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
-        print_log('downloading: ', 'page {2} {1} - {0}%'.format(dl, url, media[1]), True)
+        print_log('downloading: ', 'page {2} {1} - {0}%'.format(dl, url, fmedia[1]), True)
         tmpfile.write(datas)
         tmpfile.flush()
     tmpfile.close()

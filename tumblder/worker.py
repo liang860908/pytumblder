@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # vim: expandtab tabstop=4 shiftwidth=4
 
-import os
 import time
 import sys
 import signal
