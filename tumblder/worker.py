@@ -106,7 +106,6 @@ def browse(args):
 
         try:
             for i in range(args.startpage, args.startpage + args.pagelimit):
-                print(tumblder.write.STOPWRITE)
                 if tumblder.write.STOPWRITE:
                     return
                 lenmedias = pagemedias(args, i, getter)
