@@ -28,7 +28,8 @@ def generate(directory, root=''):
         photoset = photos[i:(i+10)]
         precpage = pagenum - 1 if i > 0 else 0
         nextpage = pagenum + 1 if i < pagemax else pagemax
-        html = '<!DOCTYPE html><html><head>{0}<meta charset="utf-8"></head><body>'.format(css)
+        html = '<!DOCTYPE html>\n'
+        html += '<html><head>{0}<meta charset="utf-8"></head><body>'.format(css)
         html += '<p id="navigator">'
         html += '<a href="index0.html">Début</a>'
         html += '— <a href="index{0}.html">précédent</a>'.format(precpage) 
