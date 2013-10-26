@@ -1,1 +1,1 @@
-__all__ = ['html', 'write']
+__all__ = ['html']

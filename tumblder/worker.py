@@ -15,7 +15,6 @@ import tumblder.write
 import tumblder.exceptions
 import tumblder.regex as regex
 import tumblder.gen.html
-import tumblder.gen.write
 
 from tumblder.pycommon.logging import print_log
 
@@ -125,5 +124,5 @@ def browse(args):
         print('generating html pages: {0}'.format(args.dldir))
         pages = tumblder.gen.html.generate(args.dldir, root=args.root)
         for i, page in enumerate(pages):
-            tumblder.gen.write.write(args.dldir, page, 'index{0}.html'.format(i))
+            tumblder.gen.html.write(args.dldir, page, 'index{0}.html'.format(i))
 

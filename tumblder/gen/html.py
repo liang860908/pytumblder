@@ -4,6 +4,11 @@ import os
 
 from tumblder import regex
 
+def write(directory, html, filename='index.html'):
+    f = open(os.path.join(directory, filename), 'w')
+    f.write(html)
+    f.close()
+
 def generate(directory, root=''):
     pages = []
     files = sorted(os.listdir(directory))
