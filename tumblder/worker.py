@@ -122,7 +122,8 @@ def browse(args):
     
 
     if args.generate:
-        print('generating html page: {0}'.format(args.dldir))
-        html = tumblder.gen.html.generate(args.dldir, root=args.root)
-        tumblder.gen.write.write(args.dldir, html)
+        print('generating html pages: {0}'.format(args.dldir))
+        pages = tumblder.gen.html.generate(args.dldir, root=args.root)
+        for i, page in enumerate(pages):
+            tumblder.gen.write.write(args.dldir, page, 'index{0}.html'.format(i))
 
