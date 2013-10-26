@@ -21,13 +21,20 @@ def generate(directory, root=''):
     pages = []
     files = reversed(sorted(os.listdir(directory)))
     photos = [x for x in files if regex.ISPHOTO.match(x)]
+    photos_per_page = 10
     pagenum = 0
-    for i in range(0, len(photos), 10):
+    pagemax = int(len(photos) / photos_per_page) - 1
+    for i in range(0, len(photos), photos_per_page):
         photoset = photos[i:(i+10)]
+        precpage = pagenum - 1 if i > 0 else 0
+        nextpage = pagenum + 1 if i < pagemax else pagemax
         html = '<!DOCTYPE html><html><head>{0}<meta charset="utf-8"></head><body>'.format(css)
-        html += '<p id="navigator">— <a href="index{0}.html">précédent</a>'.format(pagenum - 1) 
+        html += '<p id="navigator">'
+        html += '<a href="index0.html">Début</a>'
+        html += '— <a href="index{0}.html">précédent</a>'.format(precpage) 
         html += ' | '
-        html += '<a href="index{0}.html">suivant</a> —'.format(pagenum + 1) 
+        html += '<a href="index{0}.html">suivant</a> —'.format(nextpage) 
+        html += '<a href="index{0}.html">Fin</a>'.format(pagemax)
         html += '</p><p>'
         for photo in photoset:
             src = os.path.join(root, photo)
