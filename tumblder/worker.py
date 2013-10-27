@@ -4,6 +4,7 @@
 import time
 import sys
 import signal
+import shutil
 
 from importlib import import_module
 from threading import Thread
@@ -124,4 +125,7 @@ def browse(args):
         pages = tumblder.gen.html.generate(args.dldir, root=args.root)
         for page in pages:
             tumblder.gen.html.write(args.dldir, page['html'], page['filename'])
+            shutil.copy('jwplayer/jwplayer.html5.js', args.dldir)
+            shutil.copy('jwplayer/jwplayer.flash.swf', args.dldir)
+            shutil.copy('jwplayer/jwplayer.js', args.dldir)
 

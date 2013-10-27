@@ -35,6 +35,7 @@ def generate(directory, root=''):
     }
     #medias {
         max-height: 90%;
+        text-align: center;
     }
     </style>'''
 
@@ -42,8 +43,11 @@ def generate(directory, root=''):
         mediaset = medias[i:(i + medias_per_page)]
         precpage = pagenum - 1 if i > 0 else 0
         nextpage = pagenum + 1 if pagenum < pagemax else pagemax
+        videoid = 0
         html = '<!DOCTYPE html>\n'
-        html += '<html><head>{0}<meta charset="utf-8"></head><body>\n'.format(css)
+        html += '<html><head>{0}'.format(css)
+        html += '<script type="text/javascript" src="jwplayer.js"></script>'
+        html += '<meta charset="utf-8"></head><body>\n'
         nav = '<p id="navigator">'
         nav += '<a href="index{0}.html">Début</a> '.format(str(0).zfill(zerofill))
         nav += '— <a href="index{0}.html">précédent</a> | '.format(str(precpage).zfill(zerofill))
@@ -51,14 +55,25 @@ def generate(directory, root=''):
         nav += '<a href="index{0}.html">Fin</a>'.format(str(pagemax).zfill(zerofill))
         nav += '</p>\n'
         html += nav
-        html += '<p id="medias">\n'
+        html += '<div id="medias">\n'
         for media in mediaset:
             src = os.path.join(root, media)
             if regex.ISPHOTO.match(media):
                 html += '<a href="{0}"><img src="{0}"></a>\n'.format(src)
             elif regex.ISVIDEO.match(media):
-                html += '<a href="{0}"><video src="{0}"></video></a>\n'.format(src)
-        html += '</p>\n'
+                videoid += 1
+                javascript = '''
+<div id="v''' + str(videoid) + '''"></div>
+
+<script type="text/javascript">
+    jwplayer("v''' + str(videoid) + '''").setup({
+        file: "''' + src + '''",
+        image: ""
+    });
+</script>
+'''
+                html += '{0}\n'.format(javascript)
+        html += '</div>\n'
         html += nav
         html += '</body></html>'
         pages.append({'filename': 'index{0}.html'.format(str(pagenum).zfill(zerofill)), 'html': html})
