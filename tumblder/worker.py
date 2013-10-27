@@ -74,10 +74,16 @@ def fetchmedia(args, media):
         sys.stderr.flush()
 
 def fetcher(args):
-    while True:
+    while not tumblder.write.STOPWRITE:
         media = mediaqueue.get()
         fetchmedia(args, media)
         mediaqueue.task_done()
+    while tumblder.write.STOPWRITE:
+        try:
+            mediaqueue.get_nowait()
+            mediaqueue.task_done()
+        except queue.Empty:
+            pass
 
 def sig_stop_dl(signum, frame):
     tumblder.write.STOPWRITE = True
@@ -106,7 +112,7 @@ def browse(args):
         try:
             for i in range(args.startpage, args.startpage + args.pagelimit):
                 if tumblder.write.STOPWRITE:
-                    return
+                    break
                 lenmedias = pagemedias(args, i, getter)
                 print('{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
                     i, lenmedias, args.startpage + args.pagelimit - 1))

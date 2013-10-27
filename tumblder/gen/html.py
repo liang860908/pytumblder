@@ -37,6 +37,9 @@ def generate(directory, root=''):
         max-height: 90%;
         text-align: center;
     }
+    .video {
+        width: ''' + imgwidth + '''%;
+    }
     </style>'''
 
     for i in range(0, len(medias), medias_per_page):
@@ -63,12 +66,11 @@ def generate(directory, root=''):
             elif regex.ISVIDEO.match(media):
                 videoid += 1
                 javascript = '''
-<div id="v''' + str(videoid) + '''"></div>
+<div id="v''' + str(videoid) + '''" class="video"></div>
 
 <script type="text/javascript">
     jwplayer("v''' + str(videoid) + '''").setup({
-        file: "''' + src + '''",
-        image: ""
+        file: "''' + src + '''"
     });
 </script>
 '''
