@@ -48,8 +48,8 @@ def media(subdir, fmedia):
         tmpfile.flush()
     tmpfile.close()
 
-    if STOPWRITE:
+    if STOPWRITE and length > 0:
         os.remove(tmpfile.name)
-    else:
+    else: # download completed or not STOPWRITE
         shutil.move(tmpfile.name, filepath)
 
