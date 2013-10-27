@@ -18,7 +18,7 @@ def generate(directory, root=''):
     lenmedias = len(photos) + len(videos)
     medias_per_page = 8
     pagenum = 0
-    pagemax = int(lenmedias / medias_per_page) - 1
+    pagemax = int(lenmedias / medias_per_page)
     zerofill = len(str(pagemax))
     imgwidth = str(int(100 / (medias_per_page / 2 + 1)))
 
@@ -45,7 +45,7 @@ def generate(directory, root=''):
     for i in range(0, len(medias), medias_per_page):
         mediaset = medias[i:(i + medias_per_page)]
         precpage = pagenum - 1 if i > 0 else 0
-        nextpage = pagenum + 1 if pagenum < pagemax else pagemax
+        nextpage = pagenum + 1 if pagenum + 1 <= pagemax else pagemax
         videoid = 0
         html = '<!DOCTYPE html>\n'
         html += '<html><head>{0}'.format(css)
