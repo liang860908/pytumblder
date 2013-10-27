@@ -85,6 +85,8 @@ def browse(args):
     global STAT_new_medias
     global STAT_page_medias
 
+    tumblder.write.prepare(args.dldir)
+
     if args.fetch:
         blog = regex.BLOG.match(args.blog)
 
@@ -93,8 +95,6 @@ def browse(args):
 
         args.blog = blog.group('protocol') + blog.group('name') + regex.TUMBLR
         getter = import_module('tumblder.getter.html')# if args.html else import_module('tumblder.getter.api')
-
-        tumblder.write.prepare(args.dldir)
 
         mediathread = Thread(target=fetcher, args=[args])
         mediathread.daemon = True
