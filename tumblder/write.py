@@ -43,7 +43,7 @@ def media(subdir, fmedia):
         length -= size
         dl = int(100 - length * 100/ length_orig)
         dl = 100 if dl > 100 else dl
-        print_log('downloading: ', 'page {2} {1} - {0}%'.format(dl, url, fmedia[1]), True)
+        print_log('downloading: ', 'page {1}, {2} - {0}%'.format(dl, fmedia[1], filename), True)
         tmpfile.write(datas)
         tmpfile.flush()
     tmpfile.close()

@@ -114,8 +114,8 @@ def browse(args):
                 if tumblder.write.STOPWRITE:
                     break
                 lenmedias = pagemedias(args, i, getter)
-                print('{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
-                    i, lenmedias, args.startpage + args.pagelimit - 1))
+                print_log('', '{0}, page {1}/{3}: {2} medias'.format(blog.group('name'),
+                    i, lenmedias, args.startpage + args.pagelimit - 1), True)
             mediaqueue.join()
         except tumblder.exceptions.UpdateStopped as err:
             sys.stderr.write('{0}\n'.format(err))
