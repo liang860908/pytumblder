@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: expandtab tabstop=4 shiftwidth=4
+# -*- coding: utf-8 -*-
 
 import time
 import sys
@@ -21,8 +22,9 @@ from tumblder.pycommon.logging import print_log
 session = requests.Session()
 
 try:
+    from Queue import Queue
     mediaqueue = Queue()
-except NameError:
+except ImportError:
     import queue
     mediaqueue = queue.Queue()
 

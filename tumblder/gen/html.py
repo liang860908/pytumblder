@@ -1,4 +1,5 @@
 # vim: expandtab tabstop=4 shiftwidth=4
+# -*- coding: utf-8 -*-
 
 import os
 
