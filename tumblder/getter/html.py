@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: expandtab tabstop=4 shiftwidth=4
+# -*- coding: utf-8 -*-
 
 from tumblder import session
 import tumblder.regex as regex
