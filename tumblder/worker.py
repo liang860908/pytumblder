@@ -6,12 +6,14 @@ import time
 import sys
 import signal
 import shutil
+import os
 
 from importlib import import_module
 from threading import Thread
 
 import requests
 
+import tumblder.getter.html
 import tumblder.write
 import tumblder.exceptions
 import tumblder.regex as regex
@@ -126,8 +128,20 @@ def browse(args):
         signal.signal(signal.SIGINT, signal.SIG_DFL)
 
         print('{0}, new medias: {1}'.format(blog.group('name'), STAT_new_medias))
-    
 
+    if args.delete_small:
+        photos = [x for x in os.listdir(args.dldir) if regex.ISPHOTO.match(x)]
+        dphotos = tumblder.getter.html.purge_smallsizes(photos)
+        for key, val in dphotos.items():
+            try:
+                if len(val['smallsizes']) > 0:
+                    print(key, val['smallsizes'], val['type'])
+                    for smallsize in val['smallsizes']:
+                        os.remove(os.path.join(args.dldir, key) + '_' + str(smallsize) + '.' + val['type'])
+            except KeyError:
+                pass
+
+    
     if args.generate:
         print('generating html pages: {0}'.format(args.dldir))
         pages = tumblder.gen.html.generate(args.dldir, root=args.root)

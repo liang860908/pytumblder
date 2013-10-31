@@ -12,22 +12,26 @@ def purge_smallsizes(photos):
     dphotos = {}
     for photo in photos:
         sizedphoto = regex.SIZEDPHOTO.match(photo)
+        pictype = regex.ISPHOTO.match(photo).group('type')
         if sizedphoto:
             name = sizedphoto.group('name')
             size = int(sizedphoto.group('size'))
-            if name in dphotos.keys():
+            try:
                 if dphotos[name]['size'] < size:
+                    try:
+                        dphotos[name]['smallsizes'] = [dphotos[name]['size']]
+                    except KeyError:
+                        dphotos[name]['smallsizes'].append(dphotos[name]['size'])
                     dphotos[name]['size'] = size
                     dphotos[name]['url'] = photo
-            else:
+            except KeyError:
                 dphotos[name] = {'size':size, 'url':photo}
+            dphotos[name]['type'] = pictype
         else:
             dphotos[photo] = {'url':photo, 'size':0}
-    photos = []
-    for val in dphotos.values():
-        photos.append(val['url'])
+            dphotos[photo]['type'] = pictype
 
-    return photos
+    return dphotos
 
 def pictures(content, smallsizes):
     photos = regex.PHOTO.findall(content)
@@ -41,7 +45,7 @@ def pictures(content, smallsizes):
     photos = list(set(photos))
 
     if not smallsizes:
-        photos = purge_smallsizes(photos)
+        photos = [x['url'] for x in purge_smallsizes(photos).values()]
 
     for photo in photos:
         filename = regex.FILENAME.match(photo).group('name')

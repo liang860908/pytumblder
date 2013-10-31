@@ -19,6 +19,8 @@ def main():
             help='take small and full size photos')
     parser.add_argument('-u', '--forceupdate', action='store_true',
             help='look each page for un update, instead of stopping on the first already-downloaded media')
+    parser.add_argument('-D', '--delete-small', action='store_true',
+            help='delete downloaded smallsized photos')
     parser.add_argument('-F', '--fetch', action='store_true',
             help='fetch pages and medias')
     parser.add_argument('-G', '--generate', action='store_true',
