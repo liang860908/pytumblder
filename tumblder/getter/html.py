@@ -17,13 +17,18 @@ def purge_smallsizes(photos):
             name = sizedphoto.group('name')
             size = int(sizedphoto.group('size'))
             try:
-                if dphotos[name]['size'] < size:
+                if size > dphotos[name]['size']:
                     try:
                         dphotos[name]['smallsizes'] = [dphotos[name]['size']]
                     except KeyError:
                         dphotos[name]['smallsizes'].append(dphotos[name]['size'])
                     dphotos[name]['size'] = size
                     dphotos[name]['url'] = photo
+                elif size < dphotos[name]['size']:
+                    try:
+                        dphotos[name]['smallsizes'] = [size]
+                    except KeyError:
+                        dphotos[name]['smallsizes'].append(size)
             except KeyError:
                 dphotos[name] = {'size':size, 'url':photo}
             dphotos[name]['type'] = pictype
