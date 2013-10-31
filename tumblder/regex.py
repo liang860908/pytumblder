@@ -11,7 +11,7 @@ TUMBLR = r'.tumblr.com'
 ISPHOTO = rec(r'.*\.(' + _PICTYPES + ')')
 ISVIDEO = rec(r'.*\.(' + _VIDTYPES + ')')
 
-PHOTO = rec(r'(http[s]?://[a-z0-9\.]*(?:media|static)' + TUMBLR + r'/(?!avatar|preview)[^ ]*\.(?:' + _PICTYPES + r'))', re.I)
+PHOTO = rec(r'(http[s]?://[a-z0-9\.]*(?:media|static)' + TUMBLR + r'/(?:[^ /]*/?)tumblr_[^ ]*\.(?:' + _PICTYPES + r'))', re.I)
 PHOTOSET = rec(r'(http[s]?://[^ ]*/photoset_iframe/[^ ]*/false)', re.I)
 SIZEDPHOTO = rec(r'.*/(?P<name>.*_)(?P<size>[0-9]+)\.(' + _PICTYPES + r')', re.I)
 
